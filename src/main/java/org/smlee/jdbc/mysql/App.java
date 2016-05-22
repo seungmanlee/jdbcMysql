@@ -35,33 +35,31 @@ public class App {
 		template = new JdbcTemplate(getDataSource());
 
 		String sql = "select PersonID , LastName, FirstName, Address, City from Persons";
-		List<Person> personList = template.query(sql, new RowMapper<Person>() {
-			public Person mapRow(ResultSet rs, int arg1) throws SQLException {
-				Person p = new Person();
-				p.setPersonID( rs.getString("PersonID"));
-				p.setLastName( rs.getString("LastName"));
-				p.setFirstName( rs.getString("FirstName"));
-				p.setAddress( rs.getString("Address"));
-				p.setCity( rs.getString("City"));
-				return p;
-			}
+
+		System.out.println("app : " + this);
+
+		// lambda style
+		List<Person> personList = template.query(sql, (rs, arg1) -> {
+			System.out.println("template lambda : " + this);
+
+			Person p = new Person();
+			p.setPersonID(rs.getString("PersonID"));
+			p.setLastName(rs.getString("LastName"));
+			p.setFirstName(rs.getString("FirstName"));
+			p.setAddress(rs.getString("Address"));
+			p.setCity(rs.getString("City"));
+			return p;
 		});
 
-		Consumer<? super Person> action = new Consumer<Person>() {
-
-			public void accept(Person p) {
-				// TODO Auto-generated method stub
-				System.out.println( p.getPersonID() );
-				System.out.println( p.getLastName() );
-				System.out.println( p.getFirstName() );
-				System.out.println( p.getAddress() );
-				System.out.println( p.getCity() );
-				
-			}
-		};
-		personList.forEach(action);
-		
-		
+		// lambda style
+		personList.forEach(p -> {
+			System.out.println("list lambda : " + this);
+			System.out.println(p.getPersonID());
+			System.out.println(p.getLastName());
+			System.out.println(p.getFirstName());
+			System.out.println(p.getAddress());
+			System.out.println(p.getCity());
+		});
 	}
 
 	public static void main(String[] args) {
